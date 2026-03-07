@@ -1,7 +1,6 @@
 # Apache Airflow official Helm chart values (minimal, K8sExecutor)
 executor: "KubernetesExecutor"
 
-# Use external Postgres we deployed
 postgresql:
   enabled: false
 
@@ -23,12 +22,11 @@ scheduler:
   replicas: 1
 
 workers:
-  enabled: false  # not used with KubernetesExecutor
+  enabled: false
 
 triggerer:
   enabled: true
 
-# Load DAGs from this repo by syncing via git (fastest)
 dags:
   gitSync:
     enabled: true
@@ -37,35 +35,13 @@ dags:
     subPath: "dags"
     wait: 30
     depth: 1
-    # If private repo, you'd add credentials; keep public for speed.
 
-# Add providers needed for K8sPodOperator + S3 (MinIO)
 extraPipPackages:
   - "apache-airflow-providers-cncf-kubernetes"
   - "apache-airflow-providers-amazon"
   - "boto3"
   - "psycopg2-binary"
 
-# Environment variables for MinIO access in tasks
-env:
-  - name: S3_ENDPOINT
-    value: "http://minio.ai-core-pipeline.svc.cluster.local:9000"
-  - name: S3_BUCKET
-    value: "lake"
-  - name: AWS_ACCESS_KEY_ID
-    valueFrom:
-      secretKeyRef:
-        name: pipeline-secrets
-        key: MINIO_ROOT_USER
-  - name: AWS_SECRET_ACCESS_KEY
-    valueFrom:
-      secretKeyRef:
-        name: pipeline-secrets
-        key: MINIO_ROOT_PASSWORD
-  - name: AWS_DEFAULT_REGION
-    value: "us-east-1"
-
-# Create an Airflow admin user (dev only)
 createUserJob:
   useHelmHooks: true
 users:
