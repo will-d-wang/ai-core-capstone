@@ -46,5 +46,5 @@ with DAG(
         log_events_on_failure=True,
         startup_timeout_seconds=600,
         execution_timeout=timedelta(minutes=45),
-        is_delete_operator_pod=True,
+        on_finish_action="delete_pod",
     )

@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 import os
 
 from airflow import DAG
-from airflow.decorators import task
+from airflow.sdk import task
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from kubernetes.client import models as k8s
 
@@ -57,5 +57,5 @@ with DAG(
         log_events_on_failure=True,
         startup_timeout_seconds=600,
         execution_timeout=timedelta(minutes=45),
-        is_delete_operator_pod=True,
+        on_finish_action="delete_pod",
     ).expand(arguments=ingest_args)
