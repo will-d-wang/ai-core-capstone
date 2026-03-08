@@ -44,7 +44,6 @@ with DAG(
         image=SPARK_IMAGE,
         image_pull_policy="IfNotPresent",
         name="daily-ingest",
-        arguments=["--run_date", run_date],
         cmds=["python", "-m", "jobs.pyspark.ingest_job"],
         env_from=[
             k8s.V1EnvFromSource(config_map_ref=k8s.V1ConfigMapEnvSource(name="pipeline-config")),
