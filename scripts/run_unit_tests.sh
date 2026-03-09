@@ -10,16 +10,16 @@ JOBS_TEST_IMAGE="${JOBS_TEST_IMAGE:-local/spark-job-tests:dev}"
 
 run_local() {
   cd "$ROOT_DIR"
-  python -m pytest -q airflow/tests
-  python -m pytest -q jobs/tests
+  uv run --extra airflow --extra dev pytest  airflow/tests
+  uv run --extra jobs-spark --extra dev pytest jobs/tests
 }
 
 run_docker() {
   cd "$ROOT_DIR"
   docker build --target tests -t "$AIRFLOW_TEST_IMAGE" -f "$AIRFLOW_DOCKERFILE" .
-  docker run --rm --entrypoint python "$AIRFLOW_TEST_IMAGE" -m pytest -q tests
+  docker run --rm --entrypoint python "$AIRFLOW_TEST_IMAGE" -m pytest airflow/tests
   docker build --target tests -t "$JOBS_TEST_IMAGE" -f "$JOBS_DOCKERFILE" .
-  docker run --rm --entrypoint python "$JOBS_TEST_IMAGE" -m pytest -q jobs/tests
+  docker run --rm --entrypoint python "$JOBS_TEST_IMAGE" -m pytest jobs/tests
 }
 
 case "$MODE" in

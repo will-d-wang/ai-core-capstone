@@ -19,7 +19,46 @@ This project demonstrates a daily ETL + feature build pipeline using Airflow orc
 - Minikube
 - kubectl
 - Helm 3
+- uv
 - Python 3.11+
+
+## Local Dev (uv)
+
+Create separate local environments for each runtime profile:
+
+```bash
+# Airflow runtime + dev tools
+uv venv .venv-airflow
+source .venv-airflow/bin/activate
+uv pip install -e ".[airflow,dev]"
+deactivate
+
+# Spark jobs runtime + dev tools
+uv venv .venv-jobs-spark
+source .venv-jobs-spark/bin/activate
+uv pip install -e ".[jobs-spark,dev]"
+deactivate
+```
+
+Run tests and tooling from the matching environment:
+
+```bash
+# Airflow tests
+source .venv-airflow/bin/activate
+pytest airflow/tests
+deactivate
+
+# Spark jobs tests
+source .venv-jobs-spark/bin/activate
+pytest jobs/tests
+deactivate
+
+# Lint and type-check (either env with `dev` installed)
+source .venv-jobs-spark/bin/activate
+ruff check .
+mypy
+deactivate
+```
 
 ## Run
 
@@ -106,7 +145,9 @@ scripts/05_trigger_run.sh backfill 2026-03-06 2026-03-07 daily_ingest
 ## Tests
 
 ```bash
-pytest -q airflow/tests jobs/tests
+scripts/run_unit_tests.sh local
+# or:
+scripts/run_unit_tests.sh docker
 ```
 
 ## Debugging

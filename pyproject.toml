@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+# packaging to metadata-only (no package discovery requirement)
+[tool.setuptools]
+py-modules = []
+
+[project]
+name = "ai-core-capstone"
+version = "0.1.0"
+description = "Airflow + Spark ETL demo"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+airflow = [
+  "apache-airflow-providers-cncf-kubernetes==10.12.3",
+]
+jobs-spark = [
+  "pyspark==3.5.1",
+]
+dev = [
+  "pytest>=8.0,<10.0",
+  "ruff>=0.9,<1.0",
+  "mypy>=1.11,<2.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["airflow/tests", "jobs/tests"]
+python_files = ["test_*.py"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["airflow", "jobs"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B"]
+
+[tool.mypy]
+python_version = "3.11"
+files = ["airflow", "jobs"]
+ignore_missing_imports = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_return_any = true
+check_untyped_defs = true
+pretty = true

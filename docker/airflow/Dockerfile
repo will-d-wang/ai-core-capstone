@@ -1,15 +1,13 @@
 FROM apache/airflow:3.1.7 AS deps
 
+WORKDIR /opt/airflow
 USER airflow
-COPY airflow/requirements.txt /opt/airflow/requirements.txt
-RUN pip install --no-cache-dir -r /opt/airflow/requirements.txt
+COPY pyproject.toml README.md /opt/airflow/
+COPY airflow/ /opt/airflow/airflow/
+RUN pip install --no-cache-dir -e ".[airflow]"
+ENV PYTHONPATH=/opt/airflow
 
 FROM deps AS tests
-WORKDIR /opt/airflow
-COPY airflow/dags/ /opt/airflow/dags/
-COPY airflow/tests/ /opt/airflow/tests/
-COPY jobs/ /opt/airflow/jobs/
-RUN pip install --no-cache-dir pytest
-ENV PYTHONPATH=/opt/airflow
+RUN pip install --no-cache-dir -e ".[dev]"
 
 FROM deps AS runtime
