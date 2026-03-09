@@ -27,6 +27,8 @@ This project demonstrates a daily ETL + feature build pipeline using Airflow orc
 
 ```bash
 scripts/00_minikube_up.sh
+# Optional sanity check (explicit profile):
+minikube status -p ai-core-etl
 ```
 
 2. Build runtime images into Minikube Docker daemon:
